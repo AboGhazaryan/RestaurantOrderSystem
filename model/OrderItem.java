@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class OrderItem {
     private int id;
-    private int orderId;
-    private int dishId;
+    private Order order;
+    private Dish dish;
     private int quantity;
     private BigDecimal price;
 

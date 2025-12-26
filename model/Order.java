@@ -11,8 +11,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class Order {
     private int id;
-    private int customerId;
     private BigDecimal totalPrice;
     private Date orderDate;
     private Status status;
+    private Customer customer;
 }

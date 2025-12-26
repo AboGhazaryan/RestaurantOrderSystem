@@ -1,9 +1,7 @@
 package service;
 
 import db.DBConnectionProvider;
-import model.Order;
-import model.OrderItem;
-import model.Status;
+import model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,6 +9,8 @@ import java.util.List;
 
 public class OrderService {
     private Connection connection = DBConnectionProvider.getInstance().getConnection();
+    private CustomerService customerService = new CustomerService();
+    private DishService dishService = new DishService();
 
     public int createOrder(int customerId) {
         String sql = "INSERT INTO `order` (customer_id, total_price) values (?,0)";
@@ -38,7 +38,7 @@ public class OrderService {
             while (resultSet.next()) {
                 Order order = new Order();
                 order.setId(resultSet.getInt("id"));
-                order.setCustomerId(resultSet.getInt("customer_id"));
+                order.setCustomer(customerService.getCustomerById(resultSet.getInt("customer_id")));
                 order.setOrderDate(resultSet.getTimestamp("order_date"));
                 order.setTotalPrice(resultSet.getBigDecimal("total_price"));
                 order.setStatus(Status.valueOf(resultSet.getString("status")));
@@ -94,7 +94,7 @@ public class OrderService {
             while (resultSet.next()) {
                 Order order = new Order();
                 order.setId(resultSet.getInt("id"));
-                order.setCustomerId(resultSet.getInt("customer_id"));
+                order.setCustomer(customerService.getCustomerById(resultSet.getInt("customer_id")));
                 order.setOrderDate(resultSet.getTimestamp("order_date"));
                 order.setTotalPrice(resultSet.getBigDecimal("total_price"));
                 order.setStatus(Status.valueOf(resultSet.getString("status")));
@@ -106,6 +106,28 @@ public class OrderService {
         }
         return orderList;
     }
+    public Order getOrderById(int id) {
+        String sql = "SELECT * FROM `order` WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                Order order = new Order();
+                order.setId(resultSet.getInt("id"));
+                order.setCustomer(customerService.getCustomerById(resultSet.getInt("customer_id")));
+                order.setOrderDate(resultSet.getTimestamp("order_date"));
+                order.setTotalPrice(resultSet.getBigDecimal("total_price"));
+                order.setStatus(Status.valueOf(resultSet.getString("status")));
+                return order;
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     public List<OrderItem> getOrderItemByOrderId(int orderId){
         List<OrderItem> items = new ArrayList<>();
@@ -121,8 +143,8 @@ public class OrderService {
             while (resultSet.next()){
                 OrderItem item = new OrderItem();
                 item.setId(resultSet.getInt("id"));
-                item.setOrderId(resultSet.getInt("order_id"));
-                item.setDishId(resultSet.getInt("dish_id"));
+                item.setOrder(getOrderById(resultSet.getInt("order_id")));
+                item.setDish(dishService.getDIshById(resultSet.getInt("dish_id")));
                 item.setQuantity(resultSet.getInt("quantity"));
                 item.setPrice(resultSet.getBigDecimal("price"));
                 items.add(item);

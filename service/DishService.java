@@ -107,6 +107,7 @@ public class DishService {
                 dish.setId(resultSet.getInt("id"));
                 dish.setName(resultSet.getString("name"));
                 dish.setCategory(Category.valueOf(resultSet.getString("category")));
+                dish.setPrice(resultSet.getBigDecimal("price"));
                 dish.setAvailable(resultSet.getBoolean("available"));
                 dishList.add(dish);
             }
