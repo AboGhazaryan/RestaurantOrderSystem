@@ -15,5 +15,4 @@ public class Order {
     private BigDecimal totalPrice;
     private Date orderDate;
     private Status status;
-   // private List<OrderItem> items = new ArrayList<>();
 }

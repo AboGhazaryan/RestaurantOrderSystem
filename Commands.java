@@ -13,7 +13,6 @@ public interface Commands {
     String CHANGE_ORDER_STATUS = "11";
     String SHOW_MENU_BY_CATEGORY = "12";
 
-
     static void printCommands() {
         System.out.println("Please input " + EXIT + " for EXIT");
         System.out.println("Please input " + ADD_DISH + " for add dish");
