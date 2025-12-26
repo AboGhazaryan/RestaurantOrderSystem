@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class Dish {
     private int id;
-    private String name;
+    private String name;//
     private Category category;
     private BigDecimal price;
     private boolean available;
