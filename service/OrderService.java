@@ -12,6 +12,7 @@ public class OrderService {
     private CustomerService customerService = new CustomerService();
     private DishService dishService = new DishService();
 
+
     public int createOrder(int customerId) {
         String sql = "INSERT INTO `order` (customer_id, total_price) values (?,0)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -131,7 +132,7 @@ public class OrderService {
 
     public List<OrderItem> getOrderItemByOrderId(int orderId){
         List<OrderItem> items = new ArrayList<>();
-        String sql = "SELECT oi.id, oi.order_id, oi.dish_id, oi.quantity, oi.price, d.name AS dish_name " +
+        String sql = "SELECT oi.id, oi.order_id, oi.dish_id, oi.quantity,oi.price, d.name AS dish_name " +
                 "FROM order_item oi " +
                 "LEFT JOIN dish d on oi.dish_id = d.id " +
                 "WHERE oi.order_id = ?";
@@ -155,8 +156,33 @@ public class OrderService {
         return items;
 
     }
+    private boolean isValidTransition(Status current, Status next) {
+        switch (current) {
+            case PENDING:
+                return next == Status.PREPARING;
+            case PREPARING:
+                return next == Status.READY;
+            case READY:
+                return next == Status.DELIVERED;
+            default:
+                return false;
+        }
+    }
 
     public void updateOrderStatus(int orderId, Status newStatus){
+        Order order = getOrderById(orderId);
+
+        if (order == null){
+            System.out.println("Order not found");
+            return;
+        }
+
+        Status currentStatus = order.getStatus();
+
+        if (!isValidTransition(currentStatus,newStatus)){
+            System.out.println("Invalid status transition: " + currentStatus + " -> " + newStatus);
+            return;
+        }
         String updateSql = "UPDATE `order` SET status = ? WHERE id =?";
 
         try(PreparedStatement preparedStatement =connection.prepareStatement(updateSql)){

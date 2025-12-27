@@ -78,14 +78,13 @@ public class RestaurantSystem implements Commands {
         System.out.println("Enter order Id");
         int orderId = Integer.parseInt(scanner.nextLine());
         System.out.println("Choose new status:");
-        System.out.println("1-> PENDING,2-> PREPARING,3-> READY,4 -> DELIVERED");
+        System.out.println("1-> PREPARING,2-> READY,3 -> DELIVERED");
         int  choice = Integer.parseInt(scanner.nextLine());
         Status newStatus;
         switch (choice){
-            case 1: newStatus = Status.PENDING;break;
-            case 2: newStatus = Status.PREPARING;break;
-            case 3: newStatus = Status.READY;break;
-            case 4: newStatus = Status.DELIVERED;break;
+            case 1: newStatus = Status.PREPARING;break;
+            case 2: newStatus = Status.READY;break;
+            case 3: newStatus = Status.DELIVERED;break;
             default:
                 System.out.println("Invalid choice");
                 return;
@@ -172,9 +171,9 @@ public class RestaurantSystem implements Commands {
     private static void createOrderFlow() {
         printCustomer();
         System.out.println("Enter customer id: ");
-        int customerid = Integer.parseInt(scanner.nextLine());
-        orderService.createOrder(customerid);
-        System.out.println("Order created successfully. Order ID = " + customerid);
+        int customerId = Integer.parseInt(scanner.nextLine());
+        int orderId = orderService.createOrder(customerId);
+        System.out.println("Order created successfully. Order ID = " + orderId);
 
     }
 
